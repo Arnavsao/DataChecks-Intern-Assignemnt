@@ -61,3 +61,28 @@ async def update_post(
     await db.refresh(post)
     return post 
 
+# Delete Post
+@router.delete("/posts/{post_id}",status_code=status.HTTP_204_NO_CONTENT)
+async def delete_post(post_id:int,
+                      db:AsyncSession = Depends(get_db),
+                      current_user: User  = Depends(get_current_user)
+):
+    result = await db.execute(select(Post).where(Post.id==post_id))
+    post = result.scalar()
+
+    if not post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Post not found")
+    
+    if post.author_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="You are not the Authorised to delete this post")
+    
+    await db.delete(post)
+    await db.commit()
+    return {"message":"Post deleted successfully"}
+
+# All Posts
+@router.get("/posts",response_model=List[PostRead])
+async def list_posts(db:AsyncSession=Depends(get_db)):
+    result = await db.execute(select(Post).order_by(Post.create_at.desc()))
+    posts = result.scalars().all()
+    return posts
