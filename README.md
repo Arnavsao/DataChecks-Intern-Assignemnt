@@ -1,44 +1,39 @@
-# User Authentication API
+How to run the code:
 
-A simple FastAPI application with user registration, login, and JWT authentication.
+S1. Create virtual environment:
+python3 -m venv venv
 
-## Features
+S2. Activate it:
+source venv/bin/activate
 
-- User registration with password hashing
-- User login with JWT token generation
-- Protected endpoints using JWT authentication
-- SQLite database for user storage
+S3. Install requirements:
+npm install requirements
 
-## Endpoints
+S4. Run the server:
+uvicorn main:app –reload
 
-- `POST /auth/register` - Register a new user
-- `POST /auth/login` - Login and get JWT token
-- `GET /auth/me` - Get current user info (protected)
+S5. Test GET request:
+URL: http://127.0.0.1:8000/
+→ Response: { “message”: “Working fine” }
 
-## Testing
+S6. Register user (POST):
+URL: http://127.0.0.1:8000/auth/register
+Body (raw JSON):
+{
+“username”: “your_username”,
+“password”: “your_password”
+}
+→ Response: { “message”: “User created successfully” }
 
-1. Register a user:
-```bash
-curl -X POST "http://127.0.0.1:8000/auth/register" \
-  -H "Content-Type: application/json" \
-  -d '{"username": "testuser", "password": "testpass"}'
-```
-
-2. Login and get token:
-```bash
-curl -X POST "http://127.0.0.1:8000/auth/login" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "username=testuser&password=testpass"
-```
-
-3. Access protected endpoint:
-```bash
-curl -X GET "http://127.0.0.1:8000/auth/me" \
-  -H "Authorization: Bearer <your-token>"
-```
-
-## Run the application
-
-```bash
-uvicorn main:app --reload
-```
+S7. Login user (POST):
+URL: http://127.0.0.1:8000/auth/login
+Headers:
+- Content-Type: application/x-www-form-urlencoded
+Body (x-www-form-urlencoded):
+- username = your_username
+- password = your_password
+→ Response:
+{
+“access_token”: “<JWT_TOKEN>”,
+“token_type”: “bearer”
+}
